@@ -53,12 +53,8 @@ func main() {
 			fmt.Printf("error inlisting secrets: %+v", err.Error())
 			return
 		}
-		//delete := true
 		for i := range result.Keys {
-			//if *result.Grants[i].Name == "cfn/atlas/profile/default" {
-			//	fmt.Printf("skipping the secret %s", *result.SecretList[i].Name)
-			//	continue
-			//}
+
 			fmt.Println("")
 			fmt.Printf("Found the secret %s", result.Keys[i].String())
 			dscKey := &kms.DescribeKeyInput{KeyId: result.Keys[i].KeyId}
@@ -67,11 +63,7 @@ func main() {
 				fmt.Println(err)
 				break
 			}
-			//input := &secretsmanager.DeleteSecretInput{
-			//	SecretId:                   result.SecretList[i].ARN,
-			//	ForceDeleteWithoutRecovery: &delete,
-			//}
-
+		
 			if *key.KeyMetadata.KeyManager == "CUSTOMER" {
 				svc.DeleteCustomKeyStore(&kms.DeleteCustomKeyStoreInput{CustomKeyStoreId: key.KeyMetadata.CustomKeyStoreId})
 
