@@ -56,27 +56,33 @@ func main() {
 		for i := range result.Keys {
 
 			fmt.Println("")
-			fmt.Printf("Found the secret %s", result.Keys[i].String())
+
 			dscKey := &kms.DescribeKeyInput{KeyId: result.Keys[i].KeyId}
 			key, err := svc.DescribeKey(dscKey)
 			if err != nil {
 				fmt.Println(err)
 				break
 			}
-		
-			if *key.KeyMetadata.KeyManager == "CUSTOMER" {
-				svc.DeleteCustomKeyStore(&kms.DeleteCustomKeyStoreInput{CustomKeyStoreId: key.KeyMetadata.CustomKeyStoreId})
 
-				//_, err := svc.DeleteSecret(input)
+			if *key.KeyMetadata.KeyState == "Disabled" {
+				fmt.Printf("%+v", key)
+				fmt.Printf("already disabled : %s", key.String())
+
+			}
+			if *key.KeyMetadata.KeyManager == "CUSTOMER" && *key.KeyMetadata.KeyState == "Enabled" {
+				fmt.Printf("%+v", key)
+
+				_, err := svc.DisableKey(&kms.DisableKeyInput{KeyId: key.KeyMetadata.KeyId})
+
+				// Deleting keys. may not work check once.
+				//_, err := svc.DeleteCustomKeyStore(&kms.DeleteCustomKeyStoreInput{CustomKeyStoreId: key.KeyMetadata.CustomKeyStoreId})
+
 				if err != nil {
-
 					fmt.Printf("error in deleting secret: %+v", err.Error())
-					return
 				}
-				fmt.Printf("deleted key : %s", *key.KeyMetadata.KeyId)
+				fmt.Printf("Disable key : %s in region %s", *key.KeyMetadata.KeyId, regions[i])
 			}
 		}
-		break
 	}
 
 }

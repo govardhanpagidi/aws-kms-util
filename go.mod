@@ -1,4 +1,4 @@
-module aws-secret-manager
+module aws-kms-util
 
 go 1.19
 

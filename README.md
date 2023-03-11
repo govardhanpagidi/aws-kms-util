@@ -2,4 +2,4 @@
 
 Read and delete operations of KMS.
 
-Deleting Customer Manged keys in all regions
+Disabling Customer Manged keys in all regions
